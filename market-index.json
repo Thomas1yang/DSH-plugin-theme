@@ -79,11 +79,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795261653,
+          "publishTimestamp": 1795302400,
           "source": {
             "type": "git",
             "url": "https://github.com/Thomas1yang/DSH-plugin.git",
-            "commit": "8b9497aa450fa83e63d519904fb07200f03f8544",
+            "commit": "598cdafaaa02c049bc6a9110794715a46e4fd2b8",
             "path": "dsh-theme-studio"
           },
           "engines": {}
