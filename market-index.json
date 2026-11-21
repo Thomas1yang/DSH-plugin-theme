@@ -49,8 +49,8 @@
         "zh": "主题工坊"
       },
       "description": {
-        "en": "Puts a wallpaper behind the Web GUI and shows a custom title and icon above the conversation. Open the panel from the palette entry in the left sidebar, or click the custom title; there you can upload a picture or paste an image address, set how much of it shows through the interface, and set the header title and icon (an emoji, a short text, or an uploaded image). Changes apply immediately, are stored in this browser only, and the panel's Reset button clears them; removing the plugin restores the default look.",
-        "zh": "给 DSH 界面铺一张壁纸，并在对话区上方显示自定义标题与图标。从左栏的调色板入口打开面板，或直接点击自定义标题；面板里可以上传图片或填写图片地址、调整壁纸的可见度，并设置标题和图标（emoji、短文字或上传的小图标）。修改即时生效，仅保存在当前浏览器；面板上的「恢复默认」会清空设置，卸载插件后界面恢复原样。"
+        "en": "Puts a wallpaper behind the Web GUI, shows a custom title and icon above the conversation, and tints the sidebar logo. Open the panel from the palette entry in the left sidebar, or click the custom title; there you can upload a picture or paste an image address, set how much of it shows through the interface, set the header title and icon (an emoji, a short text, or an uploaded image), and pick a colour for the DeepSeek Harness mark at the top left. Changes apply immediately, are stored in this browser only, and the panel's Reset button clears them; removing the plugin restores the default look.",
+        "zh": "给 DSH 界面铺一张壁纸，在对话区上方显示自定义标题与图标，并给侧栏图标换个颜色。从左栏的调色板入口打开面板，或直接点击自定义标题；面板里可以上传图片或填写图片地址、调整壁纸的可见度、设置标题和图标（emoji、短文字或上传的小图标），并为左上角的 DeepSeek Harness 图标挑选颜色。修改即时生效，仅保存在当前浏览器；面板上的「恢复默认」会清空设置，卸载插件后界面恢复原样。"
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDM2IDM2Ij4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1LjQgNS40KSBzY2FsZSgxLjA1KSI+CiAgICA8cGF0aCBkPSJNMTIgM2E5IDkgMCAxIDAgMCAxOGgxLjRhMi42IDIuNiAwIDAgMCAxLjgtNC40IDEuNyAxLjcgMCAwIDEgMS4yLTIuOWgyLjFhMy41IDMuNSAwIDAgMCAzLjUtMy41QTkgOSAwIDAgMCAxMiAzWiIKICAgICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzI0N2JiZiIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGNpcmNsZSBjeD0iNy41IiBjeT0iMTAuNSIgcj0iMS4yNSIgZmlsbD0iIzI0N2JiZiIvPgogICAgPGNpcmNsZSBjeD0iMTEiIGN5PSI3LjUiIHI9IjEuMjUiIGZpbGw9IiMyYTlkOGYiLz4KICAgIDxjaXJjbGUgY3g9IjE1LjUiIGN5PSI5IiByPSIxLjI1IiBmaWxsPSIjZDk5YjJiIi8+CiAgICA8Y2lyY2xlIGN4PSI4IiBjeT0iMTUuNSIgcj0iMS4yNSIgZmlsbD0iI2I4NTM2YiIvPgogIDwvZz4KPC9zdmc+Cg==",
       "author": "Thomas1yang",
@@ -79,11 +79,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795260684,
+          "publishTimestamp": 1795261653,
           "source": {
             "type": "git",
             "url": "https://github.com/Thomas1yang/DSH-plugin.git",
-            "commit": "a80571d3bf92c66f9c9eddd75a0a137675d796a6",
+            "commit": "8b9497aa450fa83e63d519904fb07200f03f8544",
             "path": "dsh-theme-studio"
           },
           "engines": {}

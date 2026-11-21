@@ -51,6 +51,21 @@ window.__ModuleLoader__.load({
     const WALLPAPER_EDGE = 1920
     /** Square canvas edge for an uploaded header icon. */
     const ICON_EDGE = 96
+    /**
+     * Colours offered for the sidebar mark. They are chosen to stay legible
+     * against both the light and the dark sidebar, and the first of them is
+     * the DeepSeek blue the shipped mark is drawn in.
+     */
+    const BRAND_COLOR_SWATCHES = [
+      '#4d6bfe',
+      '#0f6bff',
+      '#7c3aed',
+      '#0d9488',
+      '#d97706',
+      '#dc2626',
+      '#db2777',
+      '#64748b',
+    ]
 
     /** English dictionary (the fallback locale of the client). */
     const EN = {
@@ -79,6 +94,13 @@ window.__ModuleLoader__.load({
       'hero.titleLabel': 'Home headline',
       'hero.placeholder': 'e.g. My workbench',
       'hero.hint': 'The mark before it reuses the icon from the previous card. Leave this empty to keep the default headline and logo.',
+      'logo.title': 'Sidebar logo colour',
+      'logo.desc': 'The DeepSeek Harness mark at the top left of the sidebar. Pick a colour or leave it on the default.',
+      'logo.label': 'Logo colour',
+      'logo.default': 'Default',
+      'logo.hint': 'The mark is drawn with the text colour, so this tints only the logo. It works in both light and dark themes.',
+      'logo.custom': 'Custom colour',
+      'logo.swatches': 'Colours',
       'action.upload': 'Upload image',
       'action.applyUrl': 'Use address',
       'action.clear': 'Remove',
@@ -120,6 +142,13 @@ window.__ModuleLoader__.load({
       'hero.titleLabel': '首页标题',
       'hero.placeholder': '例如：我的工作台',
       'hero.hint': '前面的图标沿用上一张卡片里的「图标」。留空则保留默认的「探索未至之境」和鲸鱼图标。',
+      'logo.title': '侧栏图标颜色',
+      'logo.desc': '左侧栏左上角的 DeepSeek Harness 图标。可以选一个颜色，或者保持默认。',
+      'logo.label': '图标颜色',
+      'logo.default': '默认',
+      'logo.hint': '图标用文字颜色绘制，所以这里只影响图标本身。浅色和深色主题都生效。',
+      'logo.custom': '自定义颜色',
+      'logo.swatches': '颜色',
       'action.upload': '上传图片',
       'action.applyUrl': '使用地址',
       'action.clear': '移除',
@@ -178,7 +207,7 @@ window.__ModuleLoader__.load({
       ".dts-btn[data-variant='primary']{background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground)}",
       ".dts-btn[data-variant='primary']:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}",
       ".dts-btn[data-variant='danger']{color:var(--dsw-alias-state-error-primary)}",
-      ".dts-btn:focus-visible,.dts-input:focus-visible,.dts-chip:focus-visible,.dts-range:focus-visible{outline:2px solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}",
+      ".dts-btn:focus-visible,.dts-input:focus-visible,.dts-chip:focus-visible,.dts-range:focus-visible,.dts-swatch:focus-visible,.dts-color:focus-visible{outline:2px solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}",
       ".dts-badge{flex:none;height:20px;padding:0 8px;border-radius:10px;background:var(--dsw-alias-interactive-bg-hover);font-size:11px;line-height:20px;color:var(--dsw-alias-label-secondary)}",
       ".dts-range{width:100%;height:20px;margin:0;accent-color:var(--dsw-alias-brand-primary)}",
       ".dts-range:disabled{opacity:.5}",
@@ -196,6 +225,20 @@ window.__ModuleLoader__.load({
       ".dts-chip-glyph img{display:block;width:100%;height:100%;object-fit:contain}",
       ".dts-icon-slot{display:inline-flex;flex:none;align-items:center;justify-content:center;width:32px;height:32px;border:1px dashed var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-layer-2);overflow:hidden;font-size:18px;line-height:1}",
       ".dts-icon-slot img{display:block;width:100%;height:100%;object-fit:contain}",
+      // The sidebar mark is the fish the shell draws with `currentColor`, so
+      // recolouring it is a matter of setting the colour on that one path.
+      // The path data is the shell's own artwork, which no other icon shares,
+      // so the selector names exactly the mark in the expanded row and in the
+      // collapsed rail alike.
+      "[data-slot='sidebar'] svg path[d^='M22.9168']{fill:var(--dts-brand-color,currentColor)}",
+      ".dts-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:6px}",
+      ".dts-swatch{position:relative;width:24px;height:24px;padding:0;border:1px solid var(--dsw-alias-border-l2);border-radius:50%;cursor:pointer;background-clip:padding-box}",
+      ".dts-swatch:hover{border-color:var(--dsw-alias-border-l4)}",
+      ".dts-swatch[aria-pressed='true']{box-shadow:0 0 0 2px var(--dsw-alias-bg-layer-1),0 0 0 3.5px var(--dsw-alias-brand-primary)}",
+      ".dts-swatch[data-default='true']{background:repeating-conic-gradient(var(--dsw-alias-label-secondary) 0 25%,var(--dsw-alias-bg-layer-2) 0 50%) 50%/10px 10px;border-color:var(--dsw-alias-border-l4)}",
+      ".dts-color{flex:none;width:32px;height:28px;padding:2px;border:0.5px solid var(--dsw-alias-border-l4);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-base);cursor:pointer}",
+      ".dts-color::-webkit-color-swatch-wrapper{padding:0}",
+      ".dts-color::-webkit-color-swatch{border:none;border-radius:3px}",
       ".dts-note{margin:0;font-size:12px;line-height:18px;color:var(--dsw-alias-label-secondary)}",
       ".dts-hero{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:0;max-width:100%}",
       ".dts-hero-glyph{display:inline-flex;flex:none;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;overflow:hidden;font-size:28px;line-height:1}",
@@ -259,6 +302,23 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * A colour the panel can offer and apply: a six-digit hex, with an
+     * optional leading alpha, in the `#rgb`, `#rgba`, `#rrggbb` or
+     * `#rrggbbaa` spelling. Only these spellings are accepted, so the value
+     * that reaches the stylesheet is always a colour and never anything else.
+     */
+    const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i
+
+    /**
+     * Whether a stored value names a colour the panel can apply.
+     * @param value - the candidate value.
+     * @returns whether it is a usable hex colour.
+     */
+    function isHexColor(value) {
+      return typeof value === 'string' && HEX_COLOR.test(value)
+    }
+
+    /**
      * Coerce whatever storage held into the current settings shape, dropping
      * fields a newer or older version wrote in a shape this version cannot use.
      * @param raw - parsed storage payload, possibly absent or foreign.
@@ -278,6 +338,7 @@ window.__ModuleLoader__.load({
         icon,
         heroTitle,
         wallpaper,
+        brandColor: isHexColor(source.brandColor) ? source.brandColor : '',
         visibility: clampInt(source.visibility, MIN_VISIBILITY, MAX_VISIBILITY, DEFAULT_VISIBILITY),
       }
     }
@@ -317,7 +378,8 @@ window.__ModuleLoader__.load({
         set(patch) {
           const next = { ...state, ...patch }
           if (next.title === state.title && next.icon === state.icon && next.heroTitle === state.heroTitle
-            && next.wallpaper === state.wallpaper && next.visibility === state.visibility) return
+            && next.wallpaper === state.wallpaper && next.visibility === state.visibility
+            && next.brandColor === state.brandColor) return
           state = next
           for (const listener of listeners) listener()
         },
@@ -684,7 +746,7 @@ window.__ModuleLoader__.load({
         }
         setConfirmReset(false)
         setUrlDraft('')
-        settings.set({ title: '', icon: '', heroTitle: '', wallpaper: '', visibility: DEFAULT_VISIBILITY })
+        settings.set({ title: '', icon: '', heroTitle: '', wallpaper: '', brandColor: '', visibility: DEFAULT_VISIBILITY })
         clearNotice()
       }
 
@@ -854,6 +916,53 @@ window.__ModuleLoader__.load({
             ? null
             : h('p', { id: 'dts-hero-error', className: 'dts-error', role: 'alert' }, heroError)))
 
+      // The logo card offers the theme's own mark in a set of colours, a
+      // colour input for any other one, and a way back to the shipped colour.
+      const logoCard = h('section', { className: 'dts-card' },
+        h('div', { className: 'dts-card-head' },
+          h('h2', null, t('logo.title')),
+          h('p', null, t('logo.desc'))),
+        h('div', { className: 'dts-row' },
+          h('span', { className: 'dts-label' }, t('logo.swatches')),
+          h('div', { className: 'dts-swatches', role: 'group', 'aria-label': t('logo.swatches') },
+            h('button', {
+              type: 'button',
+              className: 'dts-swatch',
+              'data-default': 'true',
+              'aria-pressed': state.brandColor === '' ? 'true' : 'false',
+              'aria-label': t('logo.default'),
+              title: t('logo.default'),
+              onClick: () => { settings.set({ brandColor: '' }) },
+            }),
+            BRAND_COLOR_SWATCHES.map((colour) => h('button', {
+              key: colour,
+              type: 'button',
+              className: 'dts-swatch',
+              style: { background: colour },
+              'aria-pressed': state.brandColor === colour ? 'true' : 'false',
+              'aria-label': colour,
+              title: colour,
+              onClick: () => { settings.set({ brandColor: colour }) },
+            }))),
+          h('div', { className: 'dts-inline' },
+            h('label', { className: 'dts-label', htmlFor: 'dts-brand-color' }, t('logo.custom')),
+            h('input', {
+              id: 'dts-brand-color',
+              className: 'dts-color',
+              type: 'color',
+              value: state.brandColor === '' ? '#4d6bfe' : state.brandColor,
+              onChange: (event) => { settings.set({ brandColor: event.target.value }) },
+            }),
+            h('span', { className: 'dts-value' }, state.brandColor === '' ? t('logo.default') : state.brandColor),
+            h('button', {
+              type: 'button',
+              className: 'dts-btn',
+              'data-variant': 'quiet',
+              disabled: state.brandColor === '',
+              onClick: () => { settings.set({ brandColor: '' }) },
+            }, t('action.clear'))),
+          h('p', { className: 'dts-hint' }, t('logo.hint'))))
+
       return h('section', { className: 'dts-page', 'aria-label': t('page.title') },
         h('div', { className: 'dts-scroll' },
           h('div', { className: 'dts-content' },
@@ -876,6 +985,7 @@ window.__ModuleLoader__.load({
             wallpaperCard,
             brandCard,
             heroCard,
+            logoCard,
             h('p', { className: 'dts-note' }, t('page.note')))))
     }
 
@@ -913,6 +1023,28 @@ window.__ModuleLoader__.load({
 
         let lastWallpaper = null
         let lastVisibility = null
+
+        // The sidebar mark's colour rides a custom property the plugin's own
+        // stylesheet reads. Setting the property on the document root tints
+        // the mark wherever it is drawn, in the expanded row and in the
+        // collapsed rail alike, without touching any other element.
+        ctx.effect(() => {
+          const apply = () => {
+            const colour = settings.get().brandColor
+            const root = document.documentElement
+            if (colour === '') {
+              root.style.removeProperty('--dts-brand-color')
+            } else {
+              root.style.setProperty('--dts-brand-color', colour)
+            }
+          }
+          apply()
+          const stop = settings.subscribe(apply)
+          return () => {
+            stop()
+            document.documentElement.style.removeProperty('--dts-brand-color')
+          }
+        }, 'theme-studio: sidebar mark colour')
 
         /** Paint the wallpaper and tint every base surface from the current settings. */
         const applyLook = () => {
@@ -973,6 +1105,7 @@ window.__ModuleLoader__.load({
                 title: state.title,
                 icon: state.icon,
                 heroTitle: state.heroTitle,
+                brandColor: state.brandColor,
                 visibility: state.visibility,
               }))
               if (state.wallpaper === '') {
