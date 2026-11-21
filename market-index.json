@@ -5,8 +5,8 @@
     "zh": "DSH 插件索引"
   },
   "description": {
-    "en": "Plugins for the DeepSeek Harness, published from the DSH-plugin repository.",
-    "zh": "为 DeepSeek Harness 提供的插件，发布自 DSH-plugin 仓库。"
+    "en": "Plugins for the DeepSeek Harness, published from the DSH-plugin-theme repository.",
+    "zh": "为 DeepSeek Harness 提供的插件，发布自 DSH-plugin-theme 仓库。"
   },
   "metadata": {
     "categories": {
@@ -54,9 +54,9 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDM2IDM2Ij4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1LjQgNS40KSBzY2FsZSgxLjA1KSI+CiAgICA8cGF0aCBkPSJNMTIgM2E5IDkgMCAxIDAgMCAxOGgxLjRhMi42IDIuNiAwIDAgMCAxLjgtNC40IDEuNyAxLjcgMCAwIDEgMS4yLTIuOWgyLjFhMy41IDMuNSAwIDAgMCAzLjUtMy41QTkgOSAwIDAgMCAxMiAzWiIKICAgICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzI0N2JiZiIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGNpcmNsZSBjeD0iNy41IiBjeT0iMTAuNSIgcj0iMS4yNSIgZmlsbD0iIzI0N2JiZiIvPgogICAgPGNpcmNsZSBjeD0iMTEiIGN5PSI3LjUiIHI9IjEuMjUiIGZpbGw9IiMyYTlkOGYiLz4KICAgIDxjaXJjbGUgY3g9IjE1LjUiIGN5PSI5IiByPSIxLjI1IiBmaWxsPSIjZDk5YjJiIi8+CiAgICA8Y2lyY2xlIGN4PSI4IiBjeT0iMTUuNSIgcj0iMS4yNSIgZmlsbD0iI2I4NTM2YiIvPgogIDwvZz4KPC9zdmc+Cg==",
       "author": "Thomas1yang",
-      "homepage": "https://github.com/Thomas1yang/DSH-plugin",
+      "homepage": "https://github.com/Thomas1yang/DSH-plugin-theme",
       "repository": {
-        "url": "https://github.com/Thomas1yang/DSH-plugin",
+        "url": "https://github.com/Thomas1yang/DSH-plugin-theme",
         "directory": "dsh-theme-studio"
       },
       "metadata": {
@@ -79,11 +79,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795302400,
+          "publishTimestamp": 1795302403,
           "source": {
             "type": "git",
-            "url": "https://github.com/Thomas1yang/DSH-plugin.git",
-            "commit": "598cdafaaa02c049bc6a9110794715a46e4fd2b8",
+            "url": "https://github.com/Thomas1yang/DSH-plugin-theme.git",
+            "commit": "e18f54208f6e379574fe74d3c7e6929ce175112e",
             "path": "dsh-theme-studio"
           },
           "engines": {}

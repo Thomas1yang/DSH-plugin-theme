@@ -21,7 +21,7 @@ index's Git source at itself, and serves:
 | What | Where |
 |---|---|
 | The index | `http://127.0.0.1:8099/market-index.json` |
-| The repository | `https://127.0.0.1:8443/Thomas1yang/DSH-plugin.git` |
+| The repository | `https://127.0.0.1:8443/Thomas1yang/DSH-plugin-theme.git` |
 
 The repository is served over https with a self-signed certificate, because
 the market format requires a Git source URL to use `https:` while the index
@@ -57,7 +57,7 @@ Once the repository is pushed, the index is served by GitHub's raw file host
 and needs no local process:
 
 ```
-https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json
+https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json
 ```
 
 Switch the profile back to it:
@@ -67,12 +67,12 @@ Switch the profile back to it:
   name: "@deepseek-ai/dsh-plugin-market"
   config:
     indexes:
-      - "https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json"
+      - "https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json"
 ```
 
 ## Pushing to GitHub
 
-The repository `Thomas1yang/DSH-plugin` exists and is public. Sign in once,
+The repository `Thomas1yang/DSH-plugin-theme` exists and is public. Sign in once,
 either with the GitHub CLI:
 
 ```sh
@@ -82,7 +82,7 @@ gh auth login
 or with a personal access token that has the `repo` scope:
 
 ```sh
-git remote set-url origin https://<user>:<token>@github.com/Thomas1yang/DSH-plugin.git
+git remote set-url origin https://<user>:<token>@github.com/Thomas1yang/DSH-plugin-theme.git
 ```
 
 Then push:
@@ -96,7 +96,7 @@ The repository has five commits and the remote is empty, so this creates
 `main` on GitHub with nothing to merge.
 
 If you prefer SSH, add a key to your GitHub account and point the remote at
-`ssh://git@github.com/Thomas1yang/DSH-plugin.git`. Note that this machine's
+`ssh://git@github.com/Thomas1yang/DSH-plugin-theme.git`. Note that this machine's
 global git config rewrites `ssh://git@github.com/` to HTTPS, so remove that
 rule first, or the rewrite will force HTTPS and need a token instead:
 
@@ -107,7 +107,7 @@ git config --global --unset url.https://github.com/.insteadof
 ## Checking that the index is readable
 
 ```sh
-curl -s https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json | head -20
+curl -s https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json | head -20
 ```
 
 If that prints the index, the Discover tab can read it. GitHub's raw file host

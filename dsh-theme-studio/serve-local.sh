@@ -25,7 +25,7 @@ mkdir -p "$SERVE_ROOT"
 echo "==> preparing the local repository"
 rm -rf "$SERVE_ROOT/Thomas1yang"
 mkdir -p "$SERVE_ROOT/Thomas1yang"
-git clone --bare "$REPO_ROOT" "$SERVE_ROOT/Thomas1yang/DSH-plugin.git" 2>&1 | tail -1
+git clone --bare "$REPO_ROOT" "$SERVE_ROOT/Thomas1yang/DSH-plugin-theme.git" 2>&1 | tail -1
 
 echo "==> preparing the certificate"
 if [ ! -f "$SERVE_ROOT/cert.pem" ]; then
@@ -50,11 +50,11 @@ path, https_port, commit = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(path) as handle:
     index = json.load(handle)
 for version in index['plugins'][0]['versions']:
-    version['source']['url'] = f'https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin.git'
+    version['source']['url'] = f'https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin-theme.git'
     version['source']['commit'] = commit
 with open(path, 'w') as handle:
     json.dump(index, handle, indent=2, ensure_ascii=False)
-print(f"  source: https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin.git")
+print(f"  source: https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin-theme.git")
 print(f"  commit: {commit}")
 PYEOF
 
@@ -153,6 +153,6 @@ https_server.socket = context.wrap_socket(https_server.socket, server_side=True)
 
 threading.Thread(target=http_server.serve_forever, daemon=True).start()
 sys.stderr.write(f"\nindex: http://127.0.0.1:{http_port}/market-index.json\n")
-sys.stderr.write(f"git:   https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin.git\n\n")
+sys.stderr.write(f"git:   https://127.0.0.1:{https_port}/Thomas1yang/DSH-plugin-theme.git\n\n")
 https_server.serve_forever()
 PYEOF

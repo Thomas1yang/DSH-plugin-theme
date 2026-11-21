@@ -29,7 +29,7 @@ One plugin, one version, installed from a pinned Git commit:
       "version": "1.0.0",
       "source": {
         "type": "git",
-        "url": "https://github.com/Thomas1yang/DSH-plugin.git",
+        "url": "https://github.com/Thomas1yang/DSH-plugin-theme.git",
         "commit": "<sha>",
         "path": "dsh-theme-studio"
       }
@@ -72,7 +72,7 @@ The index lives at the repository root and the Plugins page reads it from
 GitHub's raw file host:
 
 ```
-https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json
+https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json
 ```
 
 Configure it in **Plugins** > **Custom plugin indexes**, or in the profile's
@@ -83,7 +83,7 @@ Configure it in **Plugins** > **Custom plugin indexes**, or in the profile's
   name: "@deepseek-ai/dsh-plugin-market"
   config:
     indexes:
-      - "https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json"
+      - "https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json"
 ```
 
 ## Notes

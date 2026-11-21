@@ -5,7 +5,7 @@ market index. It needs GitHub credentials to push.
 
 ## One-time setup
 
-The repository `Thomas1yang/DSH-plugin` already exists and is public. Sign in
+The repository `Thomas1yang/DSH-plugin-theme` already exists and is public. Sign in
 to GitHub once, either with the GitHub CLI:
 
 ```sh
@@ -15,11 +15,11 @@ gh auth login
 or with a personal access token (the `repo` scope), which git can then use:
 
 ```sh
-git remote set-url origin https://<user>:<token>@github.com/Thomas1yang/DSH-plugin.git
+git remote set-url origin https://<user>:<token>@github.com/Thomas1yang/DSH-plugin-theme.git
 ```
 
 If you prefer SSH, add a key to your GitHub account and point the remote at
-`ssh://git@github.com/Thomas1yang/DSH-plugin.git`. Note that this machine's
+`ssh://git@github.com/Thomas1yang/DSH-plugin-theme.git`. Note that this machine's
 global git config rewrites `ssh://git@github.com/` to HTTPS, so remove that
 rule with `git config --global --unset url.https://github.com/.insteadof`
 first, or the rewrite will force HTTPS and need a token instead.
@@ -40,7 +40,7 @@ The index is served from the repository root, so the Discover tab can read it
 as soon as the push lands:
 
 ```
-https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json
+https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json
 ```
 
 It is already configured in this profile's `cordis.patch.yml` under
@@ -50,7 +50,7 @@ moment and press **刷新** on the Discover tab.
 Check that the plugin appears there:
 
 ```sh
-curl -s https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json | head -20
+curl -s https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json | head -20
 ```
 
 ## Releasing a new version later

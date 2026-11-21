@@ -11,7 +11,7 @@ format-1 market index that the Harness reads on the **Plugins** page's
 Add the index under **Plugins** > **Custom plugin indexes**:
 
 ```
-https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json
+https://raw.githubusercontent.com/Thomas1yang/DSH-plugin-theme/main/market-index.json
 ```
 
 The Discover tab then lists every plugin here with its version, description,

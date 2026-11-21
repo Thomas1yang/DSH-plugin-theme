@@ -32,7 +32,7 @@ const bundleDir = dirname(fileURLToPath(import.meta.url))
 
 /** Parse the command line into a plain options record. */
 function parseArgs(argv) {
-  const options = { repo: 'Thomas1yang/DSH-plugin', out: null }
+  const options = { repo: 'Thomas1yang/DSH-plugin-theme', out: null }
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index]
     if (flag === '--repo') options.repo = argv[index + 1]
@@ -103,8 +103,8 @@ const index = {
     zh: 'DSH 插件索引',
   },
   description: {
-    en: 'Plugins for the DeepSeek Harness, published from the DSH-plugin repository.',
-    zh: '为 DeepSeek Harness 提供的插件，发布自 DSH-plugin 仓库。',
+    en: 'Plugins for the DeepSeek Harness, published from the DSH-plugin-theme repository.',
+    zh: '为 DeepSeek Harness 提供的插件，发布自 DSH-plugin-theme 仓库。',
   },
   metadata: {
     categories: {
