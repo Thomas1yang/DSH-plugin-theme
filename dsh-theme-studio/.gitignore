@@ -1,0 +1,12 @@
+# Build output and local artifacts
+node_modules/
+dist/
+*.tgz
+.DS_Store
+
+# Local preview screenshots
+shots/
+
+# Local editor state
+.vscode/
+.idea/

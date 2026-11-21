@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Theme studio",
+    "description": "Puts a wallpaper behind the Web GUI and shows a custom title and icon above the conversation. Open the panel from the palette entry in the left sidebar, or click the custom title; there you can upload a picture or paste an image address, set how much of it shows through the interface, and set the header title and icon (an emoji, a short text, or an uploaded image). Changes apply immediately, are stored in this browser only, and the panel's Reset button clears them; removing the plugin restores the default look."
+  }
+}
