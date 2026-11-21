@@ -1,12 +1,12 @@
 {
   "format": 1,
   "title": {
-    "en": "Yangweichao plugin index",
-    "zh": "杨小生插件索引"
+    "en": "DSH plugin index",
+    "zh": "DSH 插件索引"
   },
   "description": {
-    "en": "Plugins published by Yangweichao for the DeepSeek Harness.",
-    "zh": "杨小生为 DeepSeek Harness 发布的插件。"
+    "en": "Plugins for the DeepSeek Harness, published from the DSH-plugin repository.",
+    "zh": "为 DeepSeek Harness 提供的插件，发布自 DSH-plugin 仓库。"
   },
   "metadata": {
     "categories": {
@@ -53,10 +53,11 @@
         "zh": "给 DSH 界面铺一张壁纸，并在对话区上方显示自定义标题与图标。从左栏的调色板入口打开面板，或直接点击自定义标题；面板里可以上传图片或填写图片地址、调整壁纸的可见度，并设置标题和图标（emoji、短文字或上传的小图标）。修改即时生效，仅保存在当前浏览器；面板上的「恢复默认」会清空设置，卸载插件后界面恢复原样。"
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDM2IDM2Ij4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1LjQgNS40KSBzY2FsZSgxLjA1KSI+CiAgICA8cGF0aCBkPSJNMTIgM2E5IDkgMCAxIDAgMCAxOGgxLjRhMi42IDIuNiAwIDAgMCAxLjgtNC40IDEuNyAxLjcgMCAwIDEgMS4yLTIuOWgyLjFhMy41IDMuNSAwIDAgMCAzLjUtMy41QTkgOSAwIDAgMCAxMiAzWiIKICAgICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzI0N2JiZiIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGNpcmNsZSBjeD0iNy41IiBjeT0iMTAuNSIgcj0iMS4yNSIgZmlsbD0iIzI0N2JiZiIvPgogICAgPGNpcmNsZSBjeD0iMTEiIGN5PSI3LjUiIHI9IjEuMjUiIGZpbGw9IiMyYTlkOGYiLz4KICAgIDxjaXJjbGUgY3g9IjE1LjUiIGN5PSI5IiByPSIxLjI1IiBmaWxsPSIjZDk5YjJiIi8+CiAgICA8Y2lyY2xlIGN4PSI4IiBjeT0iMTUuNSIgcj0iMS4yNSIgZmlsbD0iI2I4NTM2YiIvPgogIDwvZz4KPC9zdmc+Cg==",
-      "author": "yangweichao",
-      "homepage": "https://github.com/yangweichao/dsh-theme-studio",
+      "author": "Thomas1yang",
+      "homepage": "https://github.com/Thomas1yang/DSH-plugin",
       "repository": {
-        "url": "https://github.com/yangweichao/dsh-theme-studio"
+        "url": "https://github.com/Thomas1yang/DSH-plugin",
+        "directory": "dsh-theme-studio"
       },
       "metadata": {
         "category": "appearance",
@@ -78,11 +79,12 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795259095,
+          "publishTimestamp": 1795260579,
           "source": {
             "type": "git",
-            "url": "https://github.com/yangweichao/dsh-theme-studio.git",
-            "commit": "78491c3f0bf92b4da0b82d01f22151895b85b654"
+            "url": "https://github.com/Thomas1yang/DSH-plugin.git",
+            "commit": "31fceed9ee0a99567cad31303289ab8c5cc7f4ed",
+            "path": "dsh-theme-studio"
           },
           "engines": {}
         }

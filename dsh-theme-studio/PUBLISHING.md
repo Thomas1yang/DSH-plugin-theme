@@ -1,15 +1,18 @@
 # Publishing to the plugin market
 
 The bundle is published through the DSH **plugin market**: a JSON index file
-that lists the bundle and the exact commit it installs from. The Plugins page
-reads that index on its **Discover** tab.
+at the repository root that lists the bundle and the exact commit it installs
+from. The Plugins page reads that index on its **Discover** tab.
 
 ## Layout
 
-| File | Role |
+This bundle lives in the `dsh-theme-studio/` directory of the `DSH-plugin`
+repository, which may hold several plugins.
+
+| Path | Role |
 |---|---|
-| `market-index.json` | The format-1 index document. The Discover tab reads this over HTTP. |
-| `build-market-index.mjs` | Regenerates the index from the repository's own state and validates it. |
+| `../market-index.json` | The format-1 index document at the repository root. The Discover tab reads this over HTTP. |
+| `build-market-index.mjs` | Regenerates the root index from the repository's own state and validates it. |
 
 ## The index
 
@@ -21,36 +24,43 @@ One plugin, one version, installed from a pinned Git commit:
   "title": { "en": "…", "zh": "…" },
   "plugins": [{
     "name": "dsh-theme-studio",
-    "source": { "type": "git", "url": "https://github.com/<owner>/<repo>.git", "commit": "<sha>" }
+    "repository": { "url": "https://github.com/Thomas1yang/DSH-plugin", "directory": "dsh-theme-studio" },
+    "versions": [{
+      "version": "1.0.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/Thomas1yang/DSH-plugin.git",
+        "commit": "<sha>",
+        "path": "dsh-theme-studio"
+      }
+    }]
   }]
 }
 ```
 
 The `commit` pins the exact tree that installs, so a published version never
-changes under an installer.
+changes under an installer. The `path` names this bundle's directory inside
+the repository, which is what makes a multi-plugin repository work.
 
 ## Publishing a new version
 
-1. Commit the change and push it:
+1. Commit the change:
 
    ```sh
    git commit -am "…"
-   git push origin main
    ```
 
-2. Regenerate the index so it names the new commit, then commit and push it:
+2. Run the publish script. It pushes the repository, regenerates the index so
+   it names the pushed commit, and pushes the index:
 
    ```sh
-   node build-market-index.mjs
-   git add market-index.json
-   git commit -m "Publish v1.1.0"
-   git push origin main
+   ./publish.sh
    ```
 
-   The script reads `git rev-parse HEAD`, the version from `package.json`, and
-   the titles from `locale/*.json`, then validates its output with the
-   installed `@deepseek-ai/dsh-plugin-market-index` validator before writing
-   it. A malformed index is never published.
+   The build script reads `git rev-parse HEAD`, the version from
+   `package.json`, and the titles from `locale/*.json`, then validates its
+   output with the installed `@deepseek-ai/dsh-plugin-market-index` validator
+   before writing it. A malformed index is never published.
 
 3. Bump `version` in `package.json` when the release is a new version. The
    index lists exactly the versions in `package.json`, so a new version needs a
@@ -58,11 +68,11 @@ changes under an installer.
 
 ## Where the index is served from
 
-The index lives in the same repository as the bundle, and the Plugins page
-reads it from GitHub's raw file host:
+The index lives at the repository root and the Plugins page reads it from
+GitHub's raw file host:
 
 ```
-https://raw.githubusercontent.com/<owner>/<repo>/main/market-index.json
+https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json
 ```
 
 Configure it in **Plugins** > **Custom plugin indexes**, or in the profile's
@@ -73,7 +83,7 @@ Configure it in **Plugins** > **Custom plugin indexes**, or in the profile's
   name: "@deepseek-ai/dsh-plugin-market"
   config:
     indexes:
-      - "https://raw.githubusercontent.com/<owner>/<repo>/main/market-index.json"
+      - "https://raw.githubusercontent.com/Thomas1yang/DSH-plugin/main/market-index.json"
 ```
 
 ## Notes
