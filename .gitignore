@@ -1,0 +1,15 @@
+# Build output and local artifacts
+node_modules/
+dist/
+*.tgz
+.DS_Store
+
+# Local preview screenshots
+shots/
+
+# The local market server's working directory
+.local-market/
+
+# Local editor state
+.vscode/
+.idea/
