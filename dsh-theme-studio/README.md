@@ -9,7 +9,7 @@ A DSH bundle that puts a **wallpaper** behind the Web GUI, a **title and icon of
 - **Wallpaper visibility** — the share of the picture that shows through the interface (10–45 %). The plugin tints the theme's base surface, the sidebar fill, and the sidebar glass with the complement, so text keeps its contrast in both light and dark themes. The slider is disabled without a picture.
 - **Header title and icon** — a chip at the left of the header row above the conversation, before the Session title. The icon is an emoji, up to 8 characters, or an uploaded image; clicking the chip opens the panel. Both empty keeps the shipped header.
 - **New-session home headline** — the large line on a blank new session ("探索未至之境"). Set a headline to replace it, together with the icon from the card above; the shipped headline, its mark, and its preview badge give way while a custom line is set. Empty keeps the shipped home untouched.
-- **Sidebar logo colour** — the DeepSeek Harness mark at the top left of the sidebar. Pick one of eight colours, any colour with the colour picker, or leave it on the default. The mark is drawn with the text colour, so this tints that one mark and nothing else, in both the expanded row and the collapsed rail, in light and dark themes.
+- **Sidebar logo and wordmark colour** — the DeepSeek Harness mark at the top left of the sidebar and the wordmark beside it. Pick one of eight colours, any colour with the colour picker, or leave them on the default. The mark and the wordmark are drawn with the text colour, so this tints those two places and nothing else, in both the expanded row and the collapsed rail, in light and dark themes. The letters cut out of the HARNESS badge take a colour that contrasts with the one you picked, so the badge stays readable whatever colour it is.
 
 ## Usage
 
@@ -17,7 +17,7 @@ A DSH bundle that puts a **wallpaper** behind the Web GUI, a **title and icon of
 2. Upload a wallpaper or paste an image address; move **Wallpaper visibility** until the interface reads the way you want.
 3. Type a title and an icon (or upload one). The header chip updates as you type.
 4. Type a **Home headline** to replace the blank home's "探索未至之境"; the same icon marks it.
-5. Pick a **Logo colour** to tint the sidebar mark, or leave the default swatch alone.
+5. Pick a **Logo colour** to tint the sidebar mark and the wordmark beside it, or leave the default swatch alone.
 6. **Reset** clears every field; a second click on **Clear all settings?** confirms.
 
 ## Storage and limits
@@ -32,7 +32,11 @@ A DSH bundle that puts a **wallpaper** behind the Web GUI, a **title and icon of
 ## Layout
 
 - `index.js` — the Host half. It registers nothing; the bundle exists for its Client module.
-- `client.js` — the Client module: dictionaries, the settings store, the wallpaper tint, the sidebar logo colour, the sidebar entry, the header chip, and the panel.
+- `client.js` — the Client module: dictionaries, the settings store, the wallpaper tint, the sidebar logo and wordmark colour, the sidebar entry, the header chip, and the panel.
 - `cordis.patch.yml` — inserts this bundle's plugin row.
 - `locale/*.json` — Plugin Manager title and description (English and Simplified Chinese).
 - `icon.svg` — the bundle's Plugin Manager icon.
+- `test-colors.mjs` — a standalone test of the colour helpers. It extracts the functions from `client.js` and exercises them:
+  ```sh
+  node test-colors.mjs
+  ```

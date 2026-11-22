@@ -94,11 +94,11 @@ window.__ModuleLoader__.load({
       'hero.titleLabel': 'Home headline',
       'hero.placeholder': 'e.g. My workbench',
       'hero.hint': 'The mark before it reuses the icon from the previous card. Leave this empty to keep the default headline and logo.',
-      'logo.title': 'Sidebar logo colour',
-      'logo.desc': 'The DeepSeek Harness mark at the top left of the sidebar. Pick a colour or leave it on the default.',
+      'logo.title': 'Sidebar logo and wordmark colour',
+      'logo.desc': 'The DeepSeek Harness mark and the wordmark beside it, at the top left of the sidebar. Pick a colour or leave them on the default.',
       'logo.label': 'Logo colour',
       'logo.default': 'Default',
-      'logo.hint': 'The mark is drawn with the text colour, so this tints only the logo. It works in both light and dark themes.',
+      'logo.hint': 'The mark and the wordmark are drawn with the text colour, so this tints only them. The letters in the HARNESS badge keep their contrast on the colour you pick. It works in both light and dark themes.',
       'logo.custom': 'Custom colour',
       'logo.swatches': 'Colours',
       'action.upload': 'Upload image',
@@ -142,11 +142,11 @@ window.__ModuleLoader__.load({
       'hero.titleLabel': '首页标题',
       'hero.placeholder': '例如：我的工作台',
       'hero.hint': '前面的图标沿用上一张卡片里的「图标」。留空则保留默认的「探索未至之境」和鲸鱼图标。',
-      'logo.title': '侧栏图标颜色',
-      'logo.desc': '左侧栏左上角的 DeepSeek Harness 图标。可以选一个颜色，或者保持默认。',
+      'logo.title': '侧栏图标与文字颜色',
+      'logo.desc': '左侧栏左上角的 DeepSeek Harness 图标，以及它右边的文字。可以选一个颜色，或者保持默认。',
       'logo.label': '图标颜色',
       'logo.default': '默认',
-      'logo.hint': '图标用文字颜色绘制，所以这里只影响图标本身。浅色和深色主题都生效。',
+      'logo.hint': '图标和文字都用文字颜色绘制，所以这里只影响这两处。HARNESS 标签里的字母会按你选的颜色自动调整深浅以保证清晰。浅色和深色主题都生效。',
       'logo.custom': '自定义颜色',
       'logo.swatches': '颜色',
       'action.upload': '上传图片',
@@ -231,6 +231,13 @@ window.__ModuleLoader__.load({
       // so the selector names exactly the mark in the expanded row and in the
       // collapsed rail alike.
       "[data-slot='sidebar'] svg path[d^='M22.9168']{fill:var(--dts-brand-color,currentColor)}",
+      // The wordmark beside it is drawn with the same `currentColor`: the
+      // "deepseek" lettering and the HARNESS badge pill. The badge letters are
+      // cut out of the pill in the theme's inverted ink, so they follow a
+      // separate variable that keeps them readable on the chosen colour.
+      "[data-slot='sidebar.brand.name'] svg path[fill='currentColor']{fill:var(--dts-brand-color,currentColor)}",
+      "[data-slot='sidebar.brand.name'] svg rect[fill='currentColor']{fill:var(--dts-brand-color,currentColor)}",
+      "[data-slot='sidebar.brand.name'] svg path[fill*='label-primary-inverted']{fill:var(--dts-badge-ink,var(--dsw-alias-label-primary-inverted))}",
       ".dts-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:6px}",
       ".dts-swatch{position:relative;width:24px;height:24px;padding:0;border:1px solid var(--dsw-alias-border-l2);border-radius:50%;cursor:pointer;background-clip:padding-box}",
       ".dts-swatch:hover{border-color:var(--dsw-alias-border-l4)}",
@@ -316,6 +323,50 @@ window.__ModuleLoader__.load({
      */
     function isHexColor(value) {
       return typeof value === 'string' && HEX_COLOR.test(value)
+    }
+
+    /**
+     * The relative luminance of a hex colour, on the usual 0-to-1 scale.
+     *
+     * The three- and four-digit spellings are expanded first, and a colour
+     * with an alpha channel is read as its own colour: the badge letters sit
+     * on top of the pill, so the pill's own colour is what decides their
+     * contrast.
+     * @param value - a hex colour.
+     * @returns the luminance, or null when the colour cannot be read.
+     */
+    function luminanceOf(value) {
+      if (!isHexColor(value)) return null
+      let hex = value.slice(1)
+      if (hex.length === 3 || hex.length === 4) {
+        // #rgb and #rgba each repeat their own digits.
+        hex = hex.slice(0, 3).split('').map((digit) => digit + digit).join('')
+      } else if (hex.length === 8) {
+        // #rrggbbaa keeps only the colour part.
+        hex = hex.slice(0, 6)
+      }
+      if (hex.length !== 6) return null
+      const channels = [0, 2, 4].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255)
+      const linear = channels.map((channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+    }
+
+    /**
+     * The colour to knock the HARNESS badge letters out with.
+     *
+     * The badge is a filled pill with the letters cut out of it, so the
+     * letters need the colour that contrasts with the pill. The pill follows
+     * the chosen brand colour, so the letters follow that colour's
+     * luminance: light on a dark brand colour, dark on a light one.
+     * @param value - the chosen hex colour.
+     * @returns the hex colour for the letters, or null when it cannot be read.
+     */
+    function badgeLetterColor(value) {
+      const luminance = luminanceOf(value)
+      if (luminance === null) return null
+      // The midpoint of the scale is where a background stops being clearly
+      // dark or clearly light; below it a dark letter reads better.
+      return luminance > 0.45 ? '#15181d' : '#ffffff'
     }
 
     /**
@@ -1028,14 +1079,22 @@ window.__ModuleLoader__.load({
         // stylesheet reads. Setting the property on the document root tints
         // the mark wherever it is drawn, in the expanded row and in the
         // collapsed rail alike, without touching any other element.
+        //
+        // The wordmark beside the mark takes the same colour, and the letters
+        // cut out of the HARNESS badge take a second property, so they keep
+        // their contrast against the badge instead of the theme's.
         ctx.effect(() => {
           const apply = () => {
             const colour = settings.get().brandColor
             const root = document.documentElement
+            const ink = badgeLetterColor(colour)
             if (colour === '') {
               root.style.removeProperty('--dts-brand-color')
+              root.style.removeProperty('--dts-badge-ink')
             } else {
               root.style.setProperty('--dts-brand-color', colour)
+              if (ink === null) root.style.removeProperty('--dts-badge-ink')
+              else root.style.setProperty('--dts-badge-ink', ink)
             }
           }
           apply()
@@ -1043,6 +1102,7 @@ window.__ModuleLoader__.load({
           return () => {
             stop()
             document.documentElement.style.removeProperty('--dts-brand-color')
+            document.documentElement.style.removeProperty('--dts-badge-ink')
           }
         }, 'theme-studio: sidebar mark colour')
 
