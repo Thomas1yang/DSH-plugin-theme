@@ -66,24 +66,69 @@ const patternMatch = source.match(/const HEX_COLOR = (\/.*\/[a-z]*)/)
 if (patternMatch === null) throw new Error('HEX_COLOR not found')
 const HEX_COLOR = new Function(`return ${patternMatch[1]}`)()
 
-// The helpers call each other and close over HEX_COLOR, so they are created
-// together inside one scope that holds those names. The pattern is passed
-// under a different name so it does not collide with the declaration.
-const isHexColor = new Function(
-  'hexPattern',
-  `const HEX_COLOR = hexPattern; return (${extractSource('isHexColor')})`,
-)(HEX_COLOR)
-const luminanceOf = new Function(
-  'hexPattern',
-  'isHexColorHelper',
-  `const HEX_COLOR = hexPattern; const isHexColor = isHexColorHelper; return (${extractSource('luminanceOf')})`,
-)(HEX_COLOR, isHexColor)
-const badgeLetterColor = new Function(
-  'hexPattern',
-  'isHexColorHelper',
-  'luminanceHelper',
-  `const HEX_COLOR = hexPattern; const isHexColor = isHexColorHelper; const luminanceOf = luminanceHelper; return (${extractSource('badgeLetterColor')})`,
-)(HEX_COLOR, isHexColor, luminanceOf)
+// The helpers call each other and close over HEX_COLOR and over the gradient
+// presets, so they are created together inside one scope that holds those
+// names under the names the extracted source uses.
+const scope = {
+  HEX_COLOR: null,
+  isHexColor: null,
+  luminanceOf: null,
+  isGradientStops: null,
+  BRAND_GRADIENTS: null,
+  BRAND_GRADIENT_ID: null,
+  BRAND_WORDMARK_GRADIENT_ID: null,
+  GRADIENT_X1: null,
+  GRADIENT_MARK_X2: null,
+  GRADIENT_WORDMARK_X2: null,
+}
+
+/**
+ * Build one helper inside a scope that holds the module's own names.
+ *
+ * The names are passed in as parameters, so the extracted source can close
+ * over them without any of them being redeclared.
+ * @param name - the function name.
+ * @param extra - extra scope entries the function needs.
+ * @returns the function.
+ */
+function makeHelper(name, extra = {}) {
+  const all = { ...scope, ...extra }
+  const keys = Object.keys(all)
+  const values = keys.map((key) => all[key])
+  return new Function(...keys, `return (${extractSource(name)})`)(...values)
+}
+
+// The gradient presets and the gradient's own constants are module-level
+// values; pull them the same way.
+const presetMatch = source.match(/const BRAND_GRADIENTS = (\[[\s\S]*?\n    \])/)
+if (presetMatch === null) throw new Error('BRAND_GRADIENTS not found')
+const gradientIdMatch = source.match(/const BRAND_GRADIENT_ID = '([^']+)'/)
+const wordmarkIdMatch = source.match(/const BRAND_WORDMARK_GRADIENT_ID = '([^']+)'/)
+const markX2Match = source.match(/const GRADIENT_MARK_X2 = ([\d.]+)/)
+const wordmarkX2Match = source.match(/const GRADIENT_WORDMARK_X2 = ([\d.]+)/)
+const x1Match = source.match(/const GRADIENT_X1 = ([\d.]+)/)
+
+scope.HEX_COLOR = HEX_COLOR
+scope.BRAND_GRADIENTS = new Function(`return ${presetMatch[1]}`)()
+scope.BRAND_GRADIENT_ID = gradientIdMatch[1]
+scope.BRAND_WORDMARK_GRADIENT_ID = wordmarkIdMatch[1]
+scope.GRADIENT_X1 = Number(x1Match[1])
+scope.GRADIENT_MARK_X2 = Number(markX2Match[1])
+scope.GRADIENT_WORDMARK_X2 = Number(wordmarkX2Match[1])
+
+scope.isHexColor = makeHelper('isHexColor')
+scope.luminanceOf = makeHelper('luminanceOf')
+scope.isGradientStops = makeHelper('isGradientStops')
+
+const isHexColor = scope.isHexColor
+const luminanceOf = scope.luminanceOf
+const isGradientStops = scope.isGradientStops
+const badgeLetterColor = makeHelper('badgeLetterColor')
+const badgeLetterColorForGradient = makeHelper('badgeLetterColorForGradient')
+const gradientById = makeHelper('gradientById')
+const gradientMarkup = makeHelper('gradientMarkup')
+const BRAND_GRADIENTS = scope.BRAND_GRADIENTS
+
 
 let failures = 0
 function check(name, actual, expected) {
@@ -146,6 +191,47 @@ for (const colour of ['#4d6bfe', '#0f6bff', '#7c3aed', '#0d9488', '#d97706', '#d
     console.log(`ok   badge ink for ${colour} is ${ink}`)
   }
 }
+
+// --- isGradientStops ---------------------------------------------------
+
+check('stops: two colours', isGradientStops(['#ff6ec7', '#3b82f6']), true)
+check('stops: three colours', isGradientStops(['#ff6ec7', '#a855f7', '#3b82f6']), true)
+check('stops: one colour is too few', isGradientStops(['#ff6ec7']), false)
+check('stops: an empty list', isGradientStops([]), false)
+check('stops: not an array', isGradientStops('#ff6ec7'), false)
+check('stops: a null value', isGradientStops(null), false)
+check('stops: one bad colour among good ones', isGradientStops(['#ff6ec7', 'red']), false)
+check('stops: a colour with alpha is accepted', isGradientStops(['#ff6ec780', '#3b82f6']), true)
+
+// --- gradientById ------------------------------------------------------
+
+check('preset: pink-blue exists', gradientById('pink-blue') !== undefined, true)
+check('preset: pink-blue stops', gradientById('pink-blue').stops, ['#ff6ec7', '#a855f7', '#3b82f6'])
+check('preset: every preset has at least two valid stops', BRAND_GRADIENTS.every((g) => isGradientStops(g.stops)), true)
+check('preset: every preset has a unique id', new Set(BRAND_GRADIENTS.map((g) => g.id)).size, BRAND_GRADIENTS.length)
+check('preset: an unknown id', gradientById('nope'), undefined)
+
+// --- badgeLetterColorForGradient --------------------------------------
+
+check('gradient ink: a dark gradient gets white letters', badgeLetterColorForGradient(['#7c3aed', '#3b82f6']), '#ffffff')
+check('gradient ink: a light gradient gets dark letters', badgeLetterColorForGradient(['#fde047', '#fef08a']), '#15181d')
+check('gradient ink: the pink-blue preset gets white letters', badgeLetterColorForGradient(gradientById('pink-blue').stops), '#ffffff')
+check('gradient ink: rejects a bad list', badgeLetterColorForGradient(['#fff']), null)
+check('gradient ink: rejects a non-array', badgeLetterColorForGradient('red'), null)
+
+// --- gradientMarkup ----------------------------------------------------
+
+const markup = gradientMarkup(['#ff6ec7', '#a855f7', '#3b82f6'])
+check('markup: two gradients are produced', (markup.match(/<linearGradient /g) || []).length, 2)
+check('markup: the mark gradient has its own span', markup.includes(`x2="${Number(markX2Match[1])}"`), true)
+check('markup: the wordmark gradient has its own span', markup.includes(`x2="${Number(wordmarkX2Match[1])}"`), true)
+check('markup: the units are the user space', (markup.match(/gradientUnits="userSpaceOnUse"/g) || []).length, 2)
+check('markup: every stop carries its colour', markup.includes('stop-color="#ff6ec7"') && markup.includes('stop-color="#3b82f6"'), true)
+check('markup: the stops are spread evenly', markup.includes('offset="0.00%"') && markup.includes('offset="50.00%"') && markup.includes('offset="100.00%"'), true)
+check('markup: the ids match the ones the stylesheet asks for', markup.includes(`id="${gradientIdMatch[1]}"`) && markup.includes(`id="${wordmarkIdMatch[1]}"`), true)
+check('markup: two stops get the ends', gradientMarkup(['#000000', '#ffffff']).includes('offset="0.00%"')
+  && gradientMarkup(['#000000', '#ffffff']).includes('offset="100.00%"'), true)
+check('markup: two stops have no middle', gradientMarkup(['#000000', '#ffffff']).includes('offset="50.00%"'), false)
 
 console.log(failures === 0 ? '\nALL PASS' : `\n${failures} FAILURES`)
 process.exit(failures === 0 ? 0 : 1)

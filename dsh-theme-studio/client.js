@@ -66,6 +66,41 @@ window.__ModuleLoader__.load({
       '#db2777',
       '#64748b',
     ]
+    /**
+     * Gradients offered for the sidebar mark and the wordmark.
+     *
+     * Each is a list of colour stops painted from left to right. The first
+     * is the pink-to-blue one; the rest are the other pairs that read well
+     * on both the light and the dark sidebar.
+     */
+    const BRAND_GRADIENTS = [
+      { id: 'pink-blue', stops: ['#ff6ec7', '#a855f7', '#3b82f6'] },
+      { id: 'sunset', stops: ['#f97316', '#ec4899'] },
+      { id: 'ocean', stops: ['#06b6d4', '#3b82f6'] },
+      { id: 'mint', stops: ['#10b981', '#0ea5e9'] },
+      { id: 'grape', stops: ['#8b5cf6', '#ec4899'] },
+      { id: 'ember', stops: ['#f59e0b', '#ef4444'] },
+    ]
+    /**
+     * The gradient the mark paints with when a gradient is chosen: the id of
+     * the shared SVG gradient the plugin injects.
+     */
+    const BRAND_GRADIENT_ID = 'dts-brand-gradient'
+    /**
+     * The gradient the wordmark paints with. The mark and the wordmark are
+     * separate drawings in separate coordinate systems, so each needs a
+     * gradient of its own: one gradient spanning both would show the mark only
+     * the first fraction of the sweep.
+     */
+    const BRAND_WORDMARK_GRADIENT_ID = 'dts-brand-wordmark-gradient'
+    /**
+     * How far each gradient runs, in the user space of the drawing it paints:
+     * the mark's own width for the mark, and the wordmark's for the lettering
+     * and the HARNESS badge beside it.
+     */
+    const GRADIENT_X1 = 0
+    const GRADIENT_MARK_X2 = 23.16
+    const GRADIENT_WORDMARK_X2 = 182
 
     /** English dictionary (the fallback locale of the client). */
     const EN = {
@@ -95,12 +130,15 @@ window.__ModuleLoader__.load({
       'hero.placeholder': 'e.g. My workbench',
       'hero.hint': 'The mark before it reuses the icon from the previous card. Leave this empty to keep the default headline and logo.',
       'logo.title': 'Sidebar logo and wordmark colour',
-      'logo.desc': 'The DeepSeek Harness mark and the wordmark beside it, at the top left of the sidebar. Pick a colour or leave them on the default.',
+      'logo.desc': 'The DeepSeek Harness mark and the wordmark beside it, at the top left of the sidebar. Pick a colour or a gradient, or leave them on the default.',
       'logo.label': 'Logo colour',
       'logo.default': 'Default',
-      'logo.hint': 'The mark and the wordmark are drawn with the text colour, so this tints only them. The letters in the HARNESS badge keep their contrast on the colour you pick. It works in both light and dark themes.',
+      'logo.hint': 'The mark and the wordmark are drawn with the text colour, so this tints only them. A gradient sweeps across the mark and across the wordmark. The letters in the HARNESS badge keep their contrast on the colour you pick. It works in both light and dark themes.',
       'logo.custom': 'Custom colour',
       'logo.swatches': 'Colours',
+      'logo.gradients': 'Gradients',
+      'logo.gradientName': 'Gradient: {name}',
+      'logo.gradientActive': 'Gradient',
       'action.upload': 'Upload image',
       'action.applyUrl': 'Use address',
       'action.clear': 'Remove',
@@ -143,12 +181,15 @@ window.__ModuleLoader__.load({
       'hero.placeholder': '例如：我的工作台',
       'hero.hint': '前面的图标沿用上一张卡片里的「图标」。留空则保留默认的「探索未至之境」和鲸鱼图标。',
       'logo.title': '侧栏图标与文字颜色',
-      'logo.desc': '左侧栏左上角的 DeepSeek Harness 图标，以及它右边的文字。可以选一个颜色，或者保持默认。',
+      'logo.desc': '左侧栏左上角的 DeepSeek Harness 图标，以及它右边的文字。可以选一个颜色或一个渐变色，或者保持默认。',
       'logo.label': '图标颜色',
       'logo.default': '默认',
-      'logo.hint': '图标和文字都用文字颜色绘制，所以这里只影响这两处。HARNESS 标签里的字母会按你选的颜色自动调整深浅以保证清晰。浅色和深色主题都生效。',
+      'logo.hint': '图标和文字都用文字颜色绘制，所以这里只影响这两处。渐变色会横扫过图标和文字。HARNESS 标签里的字母会按你选的颜色自动调整深浅以保证清晰。浅色和深色主题都生效。',
       'logo.custom': '自定义颜色',
       'logo.swatches': '颜色',
+      'logo.gradients': '渐变色',
+      'logo.gradientName': '渐变色：{name}',
+      'logo.gradientActive': '渐变色',
       'action.upload': '上传图片',
       'action.applyUrl': '使用地址',
       'action.clear': '移除',
@@ -230,19 +271,27 @@ window.__ModuleLoader__.load({
       // The path data is the shell's own artwork, which no other icon shares,
       // so the selector names exactly the mark in the expanded row and in the
       // collapsed rail alike.
-      "[data-slot='sidebar'] svg path[d^='M22.9168']{fill:var(--dts-brand-color,currentColor)}",
+      //
+      // The fill is a variable, so the same rule paints a solid colour or a
+      // gradient. The mark and the wordmark are separate drawings in separate
+      // coordinate systems, so each takes the gradient of its own space.
+      "[data-slot='sidebar'] svg path[d^='M22.9168']{fill:var(--dts-brand-fill,var(--dts-brand-color,currentColor))}",
       // The wordmark beside it is drawn with the same `currentColor`: the
       // "deepseek" lettering and the HARNESS badge pill. The badge letters are
       // cut out of the pill in the theme's inverted ink, so they follow a
       // separate variable that keeps them readable on the chosen colour.
-      "[data-slot='sidebar.brand.name'] svg path[fill='currentColor']{fill:var(--dts-brand-color,currentColor)}",
-      "[data-slot='sidebar.brand.name'] svg rect[fill='currentColor']{fill:var(--dts-brand-color,currentColor)}",
+      "[data-slot='sidebar.brand.name'] svg path[fill='currentColor']{fill:var(--dts-brand-wordmark-fill,var(--dts-brand-color,currentColor))}",
+      "[data-slot='sidebar.brand.name'] svg rect[fill='currentColor']{fill:var(--dts-brand-wordmark-fill,var(--dts-brand-color,currentColor))}",
       "[data-slot='sidebar.brand.name'] svg path[fill*='label-primary-inverted']{fill:var(--dts-badge-ink,var(--dsw-alias-label-primary-inverted))}",
       ".dts-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:6px}",
       ".dts-swatch{position:relative;width:24px;height:24px;padding:0;border:1px solid var(--dsw-alias-border-l2);border-radius:50%;cursor:pointer;background-clip:padding-box}",
       ".dts-swatch:hover{border-color:var(--dsw-alias-border-l4)}",
       ".dts-swatch[aria-pressed='true']{box-shadow:0 0 0 2px var(--dsw-alias-bg-layer-1),0 0 0 3.5px var(--dsw-alias-brand-primary)}",
       ".dts-swatch[data-default='true']{background:repeating-conic-gradient(var(--dsw-alias-label-secondary) 0 25%,var(--dsw-alias-bg-layer-2) 0 50%) 50%/10px 10px;border-color:var(--dsw-alias-border-l4)}",
+      // A gradient swatch paints its own stops, so the preset reads as the
+      // gradient it will apply.
+      ".dts-swatch[data-gradient='true']{border-radius:6px;border-color:var(--dsw-alias-border-l2)}",
+      ".dts-swatch[data-gradient='true'][aria-pressed='true']{box-shadow:0 0 0 2px var(--dsw-alias-bg-layer-1),0 0 0 3.5px var(--dsw-alias-brand-primary)}",
       ".dts-color{flex:none;width:32px;height:28px;padding:2px;border:0.5px solid var(--dsw-alias-border-l4);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-base);cursor:pointer}",
       ".dts-color::-webkit-color-swatch-wrapper{padding:0}",
       ".dts-color::-webkit-color-swatch{border:none;border-radius:3px}",
@@ -370,6 +419,66 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * Whether a stored value names a usable gradient.
+     *
+     * A gradient is a list of at least two colour stops, each a hex colour.
+     * Anything else is ignored, so a value an older version wrote cannot
+     * reach the stylesheet.
+     * @param value - the candidate value.
+     * @returns whether it is a usable list of stops.
+     */
+    function isGradientStops(value) {
+      return Array.isArray(value)
+        && value.length >= 2
+        && value.every((stop) => isHexColor(stop))
+    }
+
+    /**
+     * The gradient the panel offers with the given id.
+     * @param id - the gradient's id.
+     * @returns the gradient, or undefined when no preset carries that id.
+     */
+    function gradientById(id) {
+      return BRAND_GRADIENTS.find((gradient) => gradient.id === id)
+    }
+
+    /**
+     * The colour the badge letters take when the pill carries a gradient.
+     *
+     * A gradient has no single colour, so the letters follow the average of
+     * its stops: that is the colour the pill mostly reads as.
+     * @param stops - the gradient's colour stops.
+     * @returns the hex colour for the letters, or null when it cannot be read.
+     */
+    function badgeLetterColorForGradient(stops) {
+      if (!isGradientStops(stops)) return null
+      const luminances = stops.map((stop) => luminanceOf(stop)).filter((value) => value !== null)
+      if (luminances.length === 0) return null
+      const average = luminances.reduce((sum, value) => sum + value, 0) / luminances.length
+      return average > 0.45 ? '#15181d' : '#ffffff'
+    }
+
+    /**
+     * The SVG markup of the two gradients.
+     *
+     * Each uses the user space of the drawing it paints, so the sweep runs
+     * across the mark in one go and across the wordmark and the badge in one
+     * go, rather than restarting inside each letter. The stops are spread
+     * evenly.
+     * @param stops - the gradient's colour stops.
+     * @returns the markup of the two linearGradient elements.
+     */
+    function gradientMarkup(stops) {
+      const last = stops.length - 1
+      const gradientStops = stops.map((stop, index) => {
+        const offset = (index / last) * 100
+        return `<stop offset="${offset.toFixed(2)}%" stop-color="${stop}"/>`
+      }).join('')
+      const gradient = (id, x2) => `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${GRADIENT_X1}" y1="0" x2="${x2}" y2="0">${gradientStops}</linearGradient>`
+      return gradient(BRAND_GRADIENT_ID, GRADIENT_MARK_X2) + gradient(BRAND_WORDMARK_GRADIENT_ID, GRADIENT_WORDMARK_X2)
+    }
+
+    /**
      * Coerce whatever storage held into the current settings shape, dropping
      * fields a newer or older version wrote in a shape this version cannot use.
      * @param raw - parsed storage payload, possibly absent or foreign.
@@ -384,12 +493,17 @@ window.__ModuleLoader__.load({
       const wallpaper = isImageRef(storedWallpaper) && storedWallpaper.length <= MAX_WALLPAPER_CHARS
         ? storedWallpaper : ''
       const heroTitle = typeof source.heroTitle === 'string' ? source.heroTitle.slice(0, MAX_TITLE) : ''
+      // A gradient and a solid colour are two ways to say the same thing, so
+      // only one of them is ever set: a gradient wins when both are present.
+      const gradient = isGradientStops(source.brandGradient) ? source.brandGradient.slice() : []
+      const brandColor = gradient.length > 0 ? '' : (isHexColor(source.brandColor) ? source.brandColor : '')
       return {
         title,
         icon,
         heroTitle,
         wallpaper,
-        brandColor: isHexColor(source.brandColor) ? source.brandColor : '',
+        brandColor,
+        brandGradient: gradient,
         visibility: clampInt(source.visibility, MIN_VISIBILITY, MAX_VISIBILITY, DEFAULT_VISIBILITY),
       }
     }
@@ -430,7 +544,9 @@ window.__ModuleLoader__.load({
           const next = { ...state, ...patch }
           if (next.title === state.title && next.icon === state.icon && next.heroTitle === state.heroTitle
             && next.wallpaper === state.wallpaper && next.visibility === state.visibility
-            && next.brandColor === state.brandColor) return
+            && next.brandColor === state.brandColor
+            && next.brandGradient.length === state.brandGradient.length
+            && next.brandGradient.every((stop, index) => stop === state.brandGradient[index])) return
           state = next
           for (const listener of listeners) listener()
         },
@@ -797,7 +913,7 @@ window.__ModuleLoader__.load({
         }
         setConfirmReset(false)
         setUrlDraft('')
-        settings.set({ title: '', icon: '', heroTitle: '', wallpaper: '', brandColor: '', visibility: DEFAULT_VISIBILITY })
+        settings.set({ title: '', icon: '', heroTitle: '', wallpaper: '', brandColor: '', brandGradient: [], visibility: DEFAULT_VISIBILITY })
         clearNotice()
       }
 
@@ -968,7 +1084,9 @@ window.__ModuleLoader__.load({
             : h('p', { id: 'dts-hero-error', className: 'dts-error', role: 'alert' }, heroError)))
 
       // The logo card offers the theme's own mark in a set of colours, a
-      // colour input for any other one, and a way back to the shipped colour.
+      // colour input for any other one, a set of gradients, and a way back to
+      // the shipped colour.
+      const hasGradient = state.brandGradient.length > 0
       const logoCard = h('section', { className: 'dts-card' },
         h('div', { className: 'dts-card-head' },
           h('h2', null, t('logo.title')),
@@ -980,10 +1098,10 @@ window.__ModuleLoader__.load({
               type: 'button',
               className: 'dts-swatch',
               'data-default': 'true',
-              'aria-pressed': state.brandColor === '' ? 'true' : 'false',
+              'aria-pressed': state.brandColor === '' && !hasGradient ? 'true' : 'false',
               'aria-label': t('logo.default'),
               title: t('logo.default'),
-              onClick: () => { settings.set({ brandColor: '' }) },
+              onClick: () => { settings.set({ brandColor: '', brandGradient: [] }) },
             }),
             BRAND_COLOR_SWATCHES.map((colour) => h('button', {
               key: colour,
@@ -993,8 +1111,22 @@ window.__ModuleLoader__.load({
               'aria-pressed': state.brandColor === colour ? 'true' : 'false',
               'aria-label': colour,
               title: colour,
-              onClick: () => { settings.set({ brandColor: colour }) },
+              onClick: () => { settings.set({ brandColor: colour, brandGradient: [] }) },
             }))),
+          h('div', { className: 'dts-row' },
+            h('span', { className: 'dts-label' }, t('logo.gradients')),
+            h('div', { className: 'dts-swatches', role: 'group', 'aria-label': t('logo.gradients') },
+              BRAND_GRADIENTS.map((gradient) => h('button', {
+                key: gradient.id,
+                type: 'button',
+                className: 'dts-swatch',
+                'data-gradient': 'true',
+                style: { background: `linear-gradient(90deg, ${gradient.stops.join(', ')})` },
+                'aria-pressed': hasGradient && state.brandGradient.join(',') === gradient.stops.join(',') ? 'true' : 'false',
+                'aria-label': t('logo.gradientName', { name: gradient.id }),
+                title: t('logo.gradientName', { name: gradient.id }),
+                onClick: () => { settings.set({ brandColor: '', brandGradient: gradient.stops.slice() }) },
+              })))),
           h('div', { className: 'dts-inline' },
             h('label', { className: 'dts-label', htmlFor: 'dts-brand-color' }, t('logo.custom')),
             h('input', {
@@ -1002,15 +1134,17 @@ window.__ModuleLoader__.load({
               className: 'dts-color',
               type: 'color',
               value: state.brandColor === '' ? '#4d6bfe' : state.brandColor,
-              onChange: (event) => { settings.set({ brandColor: event.target.value }) },
+              onChange: (event) => { settings.set({ brandColor: event.target.value, brandGradient: [] }) },
             }),
-            h('span', { className: 'dts-value' }, state.brandColor === '' ? t('logo.default') : state.brandColor),
+            h('span', { className: 'dts-value' }, hasGradient
+              ? t('logo.gradientActive')
+              : state.brandColor === '' ? t('logo.default') : state.brandColor),
             h('button', {
               type: 'button',
               className: 'dts-btn',
               'data-variant': 'quiet',
-              disabled: state.brandColor === '',
-              onClick: () => { settings.set({ brandColor: '' }) },
+              disabled: state.brandColor === '' && !hasGradient,
+              onClick: () => { settings.set({ brandColor: '', brandGradient: [] }) },
             }, t('action.clear'))),
           h('p', { className: 'dts-hint' }, t('logo.hint'))))
 
@@ -1083,26 +1217,60 @@ window.__ModuleLoader__.load({
         // The wordmark beside the mark takes the same colour, and the letters
         // cut out of the HARNESS badge take a second property, so they keep
         // their contrast against the badge instead of the theme's.
+        //
+        // A gradient needs a definition of its own: one SVG gradient for the
+        // mark and one for the wordmark, because the two are separate drawings
+        // in separate coordinate systems. Each sweep runs across the whole of
+        // the thing it paints.
         ctx.effect(() => {
+          let gradientSvg = null
           const apply = () => {
-            const colour = settings.get().brandColor
+            const { brandColor, brandGradient } = settings.get()
             const root = document.documentElement
-            const ink = badgeLetterColor(colour)
-            if (colour === '') {
-              root.style.removeProperty('--dts-brand-color')
+            const gradient = brandGradient.length > 0 ? brandGradient : null
+            const ink = gradient === null ? badgeLetterColor(brandColor) : badgeLetterColorForGradient(gradient)
+            if (gradient === null) {
+              root.style.removeProperty('--dts-brand-fill')
+              root.style.removeProperty('--dts-brand-wordmark-fill')
               root.style.removeProperty('--dts-badge-ink')
+              if (gradientSvg !== null) {
+                gradientSvg.remove()
+                gradientSvg = null
+              }
             } else {
-              root.style.setProperty('--dts-brand-color', colour)
+              if (gradientSvg === null) {
+                gradientSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+                gradientSvg.setAttribute('width', '0')
+                gradientSvg.setAttribute('height', '0')
+                gradientSvg.setAttribute('aria-hidden', 'true')
+                gradientSvg.setAttribute('data-plugin', 'dsh-theme-studio')
+                gradientSvg.style.position = 'absolute'
+                document.body.append(gradientSvg)
+              }
+              gradientSvg.innerHTML = `<defs>${gradientMarkup(gradient)}</defs>`
+              root.style.setProperty('--dts-brand-fill', `url(#${BRAND_GRADIENT_ID})`)
+              root.style.setProperty('--dts-brand-wordmark-fill', `url(#${BRAND_WORDMARK_GRADIENT_ID})`)
               if (ink === null) root.style.removeProperty('--dts-badge-ink')
               else root.style.setProperty('--dts-badge-ink', ink)
+            }
+            if (brandColor === '' && gradient === null) {
+              root.style.removeProperty('--dts-brand-color')
+            } else if (gradient === null) {
+              root.style.setProperty('--dts-brand-color', brandColor)
+            } else {
+              root.style.removeProperty('--dts-brand-color')
             }
           }
           apply()
           const stop = settings.subscribe(apply)
           return () => {
             stop()
-            document.documentElement.style.removeProperty('--dts-brand-color')
-            document.documentElement.style.removeProperty('--dts-badge-ink')
+            const root = document.documentElement
+            root.style.removeProperty('--dts-brand-color')
+            root.style.removeProperty('--dts-brand-fill')
+            root.style.removeProperty('--dts-brand-wordmark-fill')
+            root.style.removeProperty('--dts-badge-ink')
+            if (gradientSvg !== null) gradientSvg.remove()
           }
         }, 'theme-studio: sidebar mark colour')
 
@@ -1166,6 +1334,7 @@ window.__ModuleLoader__.load({
                 icon: state.icon,
                 heroTitle: state.heroTitle,
                 brandColor: state.brandColor,
+                brandGradient: state.brandGradient,
                 visibility: state.visibility,
               }))
               if (state.wallpaper === '') {

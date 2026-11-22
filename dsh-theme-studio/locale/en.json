@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Theme studio",
-    "description": "Puts a wallpaper behind the Web GUI, shows a custom title and icon above the conversation, and tints the sidebar logo and wordmark. Open the panel from the palette entry in the left sidebar, or click the custom title; there you can upload a picture or paste an image address, set how much of it shows through the interface, set the header title and icon (an emoji, a short text, or an uploaded image), and pick a colour for the DeepSeek Harness mark and the wordmark beside it at the top left. Changes apply immediately, are stored in this browser only, and the panel's Reset button clears them; removing the plugin restores the default look."
+    "description": "Puts a wallpaper behind the Web GUI, shows a custom title and icon above the conversation, and tints the sidebar logo and wordmark. Open the panel from the palette entry in the left sidebar, or click the custom title; there you can upload a picture or paste an image address, set how much of it shows through the interface, set the header title and icon (an emoji, a short text, or an uploaded image), and pick a colour or a gradient for the DeepSeek Harness mark and the wordmark beside it at the top left. Changes apply immediately, are stored in this browser only, and the panel's Reset button clears them; removing the plugin restores the default look."
   }
 }
